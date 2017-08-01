@@ -1,0 +1,43 @@
+Git:
+    # Let's keep on using '--recursive' option for now, we'd probably remove it
+    # later on...
+    git clone --recursive https://github.com/Drooids/blitz-playground.git
+
+Cmake:
+    # Link
+    https://cmake.org/download/
+
+    # For Ubuntu
+    sudo apt-get install cmake
+
+    # For Redhat
+    yum install cmake
+
+    # For Mac OS X with Macports
+    sudo port install cmake
+
+    # g++
+    sduo apt-get install g++
+
+    # OpenGL
+    sudo apt-get update
+    sudo apt-get install libpng-dev libjpeg-dev libxxf86vm1 libxxf86vm-dev libxi-dev libxrandr-dev
+    sudo apt-get install mesa-common-dev
+    sudo apt-get install mesa-utils-extra libgl1-mesa-dev libglapi-mesa
+
+    # Cmake on windows
+    1. Include header files as per default
+    2. When our application runs, the operating system needs to be able to find the dll file.
+       Copy _dependency_.dll and put it either your project's working directory (where the vcxproj file is at), or inside of the system directory. C:\WINDOWS\SYSTEM32 is the 32bit windows system directory and C:\Windows\SysWOW64 is the 64bit system directory of 32bit applications.
+
+    # Build
+        # GNU/Linux
+        ./scripts/cmake-make.sh -j8
+
+        # Windows
+        1. Run the cmake gui and point it to this projects folder, configure and then generate a project using whatever toolchain you want. Tested with visual studio 2015
+        2. Build the project
+
+Some Useful Commands:
+    # Check the arch of a static library
+    objdump -f libSDL2_image.a | grep ^architecture
