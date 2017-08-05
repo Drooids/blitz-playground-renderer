@@ -169,7 +169,7 @@ IF(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t")
 
   # WarningLevel: /W<level 0 to 4> or /Wall
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
 
   # Detect64BitPortabilityProblems: /Wp64 - Deprecated since VC++ 2010
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wp64")
