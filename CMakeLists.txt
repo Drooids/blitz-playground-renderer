@@ -99,6 +99,12 @@ IF(WIN32)
     set(SDL2_IMAGE_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/SDL_image/lib/${DEBUG_MODE}/SDL2_image.lib")
     set(SDL2_IMAGE_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/SDL_image/dll/${DEBUG_MODE}")
 
+    # GLFW
+    set(GLFW_INCLUDE_DIR "${DEPENDENCIES}/include/GLFW")
+    set(GLFW_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/lib/${DEBUG_MODE}/glfw3.lib")
+    set(GLFW_MAIN_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/lib/${DEBUG_MODE}/glfw3dll.lib")
+    set(GLFW_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/dll/${DEBUG_MODE}")
+
     # tinyxml2
     set(TINYXML2_INCLUDE_DIR "${DEPENDENCIES}/include/tinyxml2")
     set(TINYXML2_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/tinyxml2/lib/${DEBUG_MODE}/tinyxml2d.lib")
@@ -163,7 +169,7 @@ IF(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t")
 
   # WarningLevel: /W<level 0 to 4> or /Wall
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
 
   # Detect64BitPortabilityProblems: /Wp64 - Deprecated since VC++ 2010
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wp64")
@@ -175,12 +181,14 @@ set(BLITZ_LIBS
     ${OPENGL_LIBRARY}
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
+    ${GLFW_LIBRARY}
     ${TINYXML2_LIBRARY}
 )
 
 set(BLITZ_INCLUDES
     ${SDL2_INCLUDE_DIR}
     ${SDL2_IMAGE_INCLUDE_DIR}
+    ${GLFW_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/
 )

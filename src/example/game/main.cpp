@@ -1,6 +1,3 @@
-#include <SDL.h>
-#include <SDL_main.h>
-
 #include "deps/Game.h"
 #include <iostream>
 

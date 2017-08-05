@@ -46,12 +46,14 @@ add_executable (main
 	${DEPS}
 	${SDL2_INCLUDE_DIR}
 	${SDL2_IMAGE_INCLUDE_DIR}
+	${GLFW_INCLUDE_DIR}
 	${TINYXML2_INCLUDE_DIR}
 )
 
 include_directories(
 	${SDL2_INCLUDE_DIR}
 	${SDL2_IMAGE_INCLUDE_DIR}
+	${GLFW_INCLUDE_DIR}
 	${TINYXML2_INCLUDE_DIR}
 	"deps"
 )
