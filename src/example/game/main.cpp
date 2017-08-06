@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     // SDL_WINDOW_FULLSCREEN
     // SDL_WINDOW_FULLSCREEN_DESKTOP
     // SDL_WINDOW_BORDERLESS
-    if(TheGame::Instance()->init("Ch 1", 100, 100, 640, 480, 0)) {
+    if(TheGame::Instance()->init("Ch 1", 100, 100, 640, 480, SDL_WINDOW_OPENGL)) {
 
         while(TheGame::Instance()->running()) {
 

@@ -30,7 +30,7 @@ IF(NOT WINDOWS)
     ENDIF()
 ENDIF()
 
-# Print message
+# System info
 
 message("--")
 message("-- CMAKE_SYSTEM_INFO_FILE: ${CMAKE_SYSTEM_INFO_FILE}")
@@ -73,22 +73,21 @@ set(DEPENDENCIES "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/platform")
 IF(NOT WIN32)
     IF("${CMAKE_SYSTEM}" MATCHES "Linux")
         # SDL
-        set(SDL2_INCLUDE_DIR "${DEPENDENCIES}/include/SDL")
         set(SDL2_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/SDL/lib/${DEBUG_MODE}/libSDL2.so")
 
         # SDL_image
-        set(SDL2_IMAGE_INCLUDE_DIR "${DEPENDENCIES}/include/SDL_image")
         set(SDL2_IMAGE_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/SDL_image/lib/${DEBUG_MODE}/libSDL2_image.so")
 
+        # GLFW
+        set(GLFW_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/lib/${DEBUG_MODE}/libglfw.so")
+
         # tinyxml2
-        set(TINYXML2_INCLUDE_DIR "${DEPENDENCIES}/include/tinyxml2")
         set(TINYXML2_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/tinyxml2/lib/${DEBUG_MODE}/libtinyxml2.so")
     ENDIF()
 ENDIF()
 
 IF(WIN32)
     # SDL
-    set(SDL2_INCLUDE_DIR "${DEPENDENCIES}/include/SDL")
     set(SDL2_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/SDL/lib/${DEBUG_MODE}/SDL2.lib")
     set(SDL2_MAIN_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/SDL/lib/${DEBUG_MODE}/SDL2main.lib")
     set(SDL2_TEST_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/SDL/lib/${DEBUG_MODE}/SDL2test.lib")
@@ -100,13 +99,11 @@ IF(WIN32)
     set(SDL2_IMAGE_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/SDL_image/dll/${DEBUG_MODE}")
 
     # GLFW
-    set(GLFW_INCLUDE_DIR "${DEPENDENCIES}/include/GLFW")
     set(GLFW_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/lib/${DEBUG_MODE}/glfw3.lib")
     set(GLFW_MAIN_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/lib/${DEBUG_MODE}/glfw3dll.lib")
     set(GLFW_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/dll/${DEBUG_MODE}")
 
     # tinyxml2
-    set(TINYXML2_INCLUDE_DIR "${DEPENDENCIES}/include/tinyxml2")
     set(TINYXML2_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/tinyxml2/lib/${DEBUG_MODE}/tinyxml2d.lib")
     set(TINYXML2_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/tinyxml2/dll/${DEBUG_MODE}")
 
@@ -126,6 +123,25 @@ IF(WIN32)
     #    $<TARGET_FILE_DIR:main>)
 ENDIF()
 
+# Header files
+
+# SDL
+set(SDL2_INCLUDE_DIR "${DEPENDENCIES}/include/SDL")
+
+# SDL_image
+set(SDL2_IMAGE_INCLUDE_DIR "${DEPENDENCIES}/include/SDL_image")
+
+# glad
+set(GLAD_INCLUDE_DIR "${DEPENDENCIES}/include/glad")
+
+# GLFW
+set(GLFW_INCLUDE_DIR "${DEPENDENCIES}/include/GLFW")
+
+# tinyxml2
+set(TINYXML2_INCLUDE_DIR "${DEPENDENCIES}/include/tinyxml2")
+
+# Library paths info
+
 message("--")
 message("-- SDL2_INCLUDE_DIR: ${SDL2_INCLUDE_DIR}")
 message("-- SDL2_LIBRARY: ${SDL2_LIBRARY}")
@@ -143,6 +159,11 @@ message("-- SDL2_IMAGE_LIBRARY: ${SDL2_IMAGE_LIBRARY}")
 
 message("-- SDL2_IMAGE_INCLUDE_DIR: ${SDL2_IMAGE_INCLUDE_DIR}")
 message("-- SDL2_IMAGE_LIBRARY: ${SDL2_IMAGE_LIBRARY}")
+
+message("-- GLAD_INCLUDE_DIR: ${GLAD_INCLUDE_DIR}")
+
+message("-- GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}")
+message("-- GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
 message("-- TINYXML2_INCLUDE_DIR: ${TINYXML2_INCLUDE_DIR}")
 message("-- TINYXML2_LIBRARY: ${TINYXML2_LIBRARY}")
@@ -188,6 +209,7 @@ set(BLITZ_LIBS
 set(BLITZ_INCLUDES
     ${SDL2_INCLUDE_DIR}
     ${SDL2_IMAGE_INCLUDE_DIR}
+    ${GLAD_INCLUDE_DIR}
     ${GLFW_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/

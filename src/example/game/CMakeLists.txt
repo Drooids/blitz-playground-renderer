@@ -44,25 +44,13 @@ SET(DEPS
 add_executable (main
 	main.cpp
 	${DEPS}
-	${SDL2_INCLUDE_DIR}
-	${SDL2_IMAGE_INCLUDE_DIR}
-	${GLFW_INCLUDE_DIR}
-	${TINYXML2_INCLUDE_DIR}
-)
-
-include_directories(
-	${SDL2_INCLUDE_DIR}
-	${SDL2_IMAGE_INCLUDE_DIR}
-	${GLFW_INCLUDE_DIR}
-	${TINYXML2_INCLUDE_DIR}
-	"deps"
 )
 
 target_link_libraries(main
-	${SDL2_LIBRARY}
-	${SDL2_IMAGE_LIBRARY}
-	${TINYXML2_LIBRARY}
+	${BLITZ_LIBS}
 )
+
+message(${BLITZ_LIBS})
 
 IF(WIN32)
 	target_link_libraries(main "${SDL2_MAIN_LIBRARY}")

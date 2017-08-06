@@ -24,6 +24,7 @@
 #include <SDL_main.h>
 #include <SDL_image.h>
 
+#include <glad.h>
 #include <GLFW/glfw3.h>
 
 class Game

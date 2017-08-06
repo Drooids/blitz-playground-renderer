@@ -33,10 +33,10 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 
 				SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
 
-				TheGameObjectFactory::Instance()->registerType("MenuButton", new MenuButtonCreator());
-				TheGameObjectFactory::Instance()->registerType("Player", new PlayerCreator());
-				TheGameObjectFactory::Instance()->registerType("Enemy", new EnemyCreator());
-				TheGameObjectFactory::Instance()->registerType("AnimatedGraphic", new AnimatedGraphicCreator());
+				// TheGameObjectFactory::Instance()->registerType("MenuButton", new MenuButtonCreator());
+				// TheGameObjectFactory::Instance()->registerType("Player", new PlayerCreator());
+				// TheGameObjectFactory::Instance()->registerType("Enemy", new EnemyCreator());
+				// TheGameObjectFactory::Instance()->registerType("AnimatedGraphic", new AnimatedGraphicCreator());
 
 				m_pGameStateMachine = new GameStateMachine();
 				m_pGameStateMachine->changeState(new MainMenuState());
