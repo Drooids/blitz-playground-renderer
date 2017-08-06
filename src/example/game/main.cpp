@@ -1,8 +1,6 @@
 #include "deps/Game.h"
 #include <iostream>
 
-using namespace std;
-
 const int FPS = 60;
 const int DELAY_TIME = 1000.0f / FPS;
 
@@ -13,7 +11,7 @@ int main(int argc, char *argv[])
     // SDL_WINDOW_FULLSCREEN
     // SDL_WINDOW_FULLSCREEN_DESKTOP
     // SDL_WINDOW_BORDERLESS
-    if(TheGame::Instance()->init("Ch 1", 100, 100, 640, 480, SDL_WINDOW_OPENGL)) {
+    if(TheGame::Instance()->init("Blitz Engine", 100, 100, 640, 480, SDL_WINDOW_OPENGL)) {
 
         while(TheGame::Instance()->running()) {
 
@@ -39,7 +37,7 @@ int main(int argc, char *argv[])
         }
 
     } else {
-        cout << SDL_GetError() << "\n";
+        std::cout << SDL_GetError() << "\n";
     }
 
     TheGame::Instance()->clean();

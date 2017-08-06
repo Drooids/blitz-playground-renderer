@@ -26,20 +26,34 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 		if(m_pWindow != 0) {
 
 			// Renderer
-			m_pRenderer = SDL_CreateRenderer(m_pWindow, -1, 0);
+			// m_pRenderer = SDL_CreateRenderer(m_pWindow, -1, 0);
 
-			if(m_pRenderer != 0) {
+			m_mainContext = SDL_GL_CreateContext(m_pWindow);
+
+			SetOpenGLAttributes();
+
+			// This makes our buffer swap syncronized with the monitor's vertical refresh
+			SDL_GL_SetSwapInterval(1);
+
+			// Init GLEW
+			// Apparently, this is needed for Apple. Thanks to Ross Vander for letting me know
+			#ifndef __APPLE__
+			glewExperimental = GL_TRUE;
+			glewInit();
+			#endif
+
+			if(m_mainContext != 0) {
 				std::cout << "Successful: Init\n";
 
-				SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
+				// SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
 
 				// TheGameObjectFactory::Instance()->registerType("MenuButton", new MenuButtonCreator());
 				// TheGameObjectFactory::Instance()->registerType("Player", new PlayerCreator());
 				// TheGameObjectFactory::Instance()->registerType("Enemy", new EnemyCreator());
 				// TheGameObjectFactory::Instance()->registerType("AnimatedGraphic", new AnimatedGraphicCreator());
 
-				m_pGameStateMachine = new GameStateMachine();
-				m_pGameStateMachine->changeState(new MainMenuState());
+				// m_pGameStateMachine = new GameStateMachine();
+				// m_pGameStateMachine->changeState(new MainMenuState());
 
 			} else
 				return false;
@@ -55,29 +69,39 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 	return true;
 }
 
+bool Game::SetOpenGLAttributes()
+{
+	// Set our OpenGL version.
+	// SDL_GL_CONTEXT_CORE gives us only the newer version, deprecated functions are disabled
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+	// 3.2 is part of the modern versions of OpenGL, but most video cards whould be able to run it
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+
+	// Turn on double buffering with a 24bit Z buffer.
+	// You may need to change this to 16 or 32 for your system
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	return true;
+}
+
 void Game::render()
 {
-	SDL_RenderClear(m_pRenderer);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-	m_pGameStateMachine->render();
+	// Use the renderer of the state machine...
+	// m_pGameStateMachine->render();
 
-	for (vector<GameObject*>::size_type i = 0;
-	i != m_gameObjects.size(); i++) {
-		m_gameObjects[i]->draw();
-	}
+	SDL_GL_SwapWindow(m_pWindow);
 
-	SDL_RenderPresent(m_pRenderer);
+	// SDL_RenderPresent(m_pRenderer);
 }
 
 void Game::update()
 {
- 	m_pGameStateMachine->update();
-
-	m_currentFrame = int(((SDL_GetTicks() / 200) % 6));
-	for (vector<GameObject*>::size_type i = 0;
-	i != m_gameObjects.size(); i++) {
-		m_gameObjects[i]->update();
-	}
+ 	// m_pGameStateMachine->update();
 }
 
 void Game::handleEvents()
@@ -97,7 +121,22 @@ bool Game::running()
 void Game::clean()
 {
 	TheInputHandler::Instance()->clean();
+
+	// Delete our OpengL context
+	SDL_GL_DeleteContext(m_mainContext);
+
+	// Destroy our window
 	SDL_DestroyWindow(m_pWindow);
-	SDL_DestroyRenderer(m_pRenderer);
+
 	SDL_Quit();
+}
+
+void Game::PrintSDL_GL_Attributes()
+{
+	int value = 0;
+	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &value);
+	std::cout << "SDL_GL_CONTEXT_MAJOR_VERSION : " << value << std::endl;
+
+	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &value);
+	std::cout << "SDL_GL_CONTEXT_MINOR_VERSION: " << value << std::endl;
 }

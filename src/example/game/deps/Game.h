@@ -24,7 +24,10 @@
 #include <SDL_main.h>
 #include <SDL_image.h>
 
-#include <glad.h>
+
+#include <GL/glew.h>
+
+// #include <glad.h>
 #include <GLFW/glfw3.h>
 
 class Game
@@ -55,14 +58,17 @@ public:
 		int width, int height, int flags
 	);
 
+	bool SetOpenGLAttributes();
+
 	void render();
 	void draw();
 	void update();
 	void handleEvents();
-	void clean();
-	void quit() { m_bRunning = false; clean(); };
-
 	bool running();
+	void clean();
+	void PrintSDL_GL_Attributes();
+
+	void quit() { m_bRunning = false; clean(); };
 
 	SDL_Renderer* getRenderer() const { return m_pRenderer; }
 
@@ -80,6 +86,12 @@ private:
 
 	SDL_Window* m_pWindow = NULL;
 	SDL_Renderer* m_pRenderer = NULL;
+
+	// Our opengl context handle
+	SDL_GLContext m_mainContext;
+
+	// OpenGL
+	int glewExperimental;
 
 	// Other
 

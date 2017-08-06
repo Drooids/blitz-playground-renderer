@@ -81,6 +81,9 @@ IF(NOT WIN32)
         # GLFW
         set(GLFW_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/lib/${DEBUG_MODE}/libglfw.so")
 
+        # GLEW
+        set(GLEW_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GL/lib/${DEBUG_MODE}/libGLEW.so")
+
         # tinyxml2
         set(TINYXML2_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/tinyxml2/lib/${DEBUG_MODE}/libtinyxml2.so")
     ENDIF()
@@ -102,6 +105,9 @@ IF(WIN32)
     set(GLFW_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/lib/${DEBUG_MODE}/glfw3.lib")
     set(GLFW_MAIN_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/lib/${DEBUG_MODE}/glfw3dll.lib")
     set(GLFW_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/dll/${DEBUG_MODE}")
+
+    # GLEW
+    # ~
 
     # tinyxml2
     set(TINYXML2_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/tinyxml2/lib/${DEBUG_MODE}/tinyxml2d.lib")
@@ -165,6 +171,9 @@ message("-- GLAD_INCLUDE_DIR: ${GLAD_INCLUDE_DIR}")
 message("-- GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}")
 message("-- GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
+message("-- GLEW_INCLUDE_DIR: ~")
+message("-- GLEW_LIBRARY: ${GLEW_LIBRARY}")
+
 message("-- TINYXML2_INCLUDE_DIR: ${TINYXML2_INCLUDE_DIR}")
 message("-- TINYXML2_LIBRARY: ${TINYXML2_LIBRARY}")
 message("--")
@@ -203,6 +212,7 @@ set(BLITZ_LIBS
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
     ${GLFW_LIBRARY}
+    ${GLEW_LIBRARY}
     ${TINYXML2_LIBRARY}
 )
 
