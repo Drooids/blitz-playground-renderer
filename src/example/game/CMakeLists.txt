@@ -75,6 +75,18 @@ IF(WIN32)
 		${SDL2_IMAGE_DLLS}
 		$<TARGET_FILE_DIR:main>)
 
+	# GLEW
+	add_custom_command(TARGET main PRE_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${GLEW_DLLS}
+		$<TARGET_FILE_DIR:main>)
+
+	# GLFW
+	add_custom_command(TARGET main PRE_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${GLFW_DLLS}
+		$<TARGET_FILE_DIR:main>)
+
 	# tinyxml2
 	add_custom_command(TARGET main PRE_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory

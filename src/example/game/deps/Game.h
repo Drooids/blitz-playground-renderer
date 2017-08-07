@@ -24,11 +24,10 @@
 #include <SDL_main.h>
 #include <SDL_image.h>
 
-
-#include <GL/glew.h>
+#include <glew.h>
 
 // #include <glad.h>
-#include <GLFW/glfw3.h>
+#include <glfw3.h>
 
 class Game
 {

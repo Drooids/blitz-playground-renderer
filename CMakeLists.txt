@@ -107,26 +107,12 @@ IF(WIN32)
     set(GLFW_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/GLFW/dll/${DEBUG_MODE}")
 
     # GLEW
-    # ~
+    set(GLEW_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/GL/lib/${DEBUG_MODE}/glew32.lib")
+    set(GLEW_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/GL/dll/${DEBUG_MODE}")
 
     # tinyxml2
     set(TINYXML2_LIBRARY "${DEPENDENCIES}/${BIT_MODE}/${OS}/tinyxml2/lib/${DEBUG_MODE}/tinyxml2d.lib")
     set(TINYXML2_DLLS "${DEPENDENCIES}/${BIT_MODE}/${OS}/tinyxml2/dll/${DEBUG_MODE}")
-
-    # Copy .dll files
-    # ${CMAKE_BINARY_DIR}/bin
-
-    # SDL
-    #add_custom_command(TARGET main PRE_BUILD
-    #    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    #    ${SDL2_DLLS}
-    #    $<TARGET_FILE_DIR:main>)
-
-    # SDL_image
-    #add_custom_command(TARGET main PRE_BUILD
-    #    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    #    ${SDL2_IMAGE_DLLS}
-    #    $<TARGET_FILE_DIR:main>)
 ENDIF()
 
 # Header files
@@ -142,6 +128,9 @@ set(GLAD_INCLUDE_DIR "${DEPENDENCIES}/include/glad")
 
 # GLFW
 set(GLFW_INCLUDE_DIR "${DEPENDENCIES}/include/GLFW")
+
+# GLEW
+set(GLEW_INCLUDE_DIR "${DEPENDENCIES}/include/GL")
 
 # tinyxml2
 set(TINYXML2_INCLUDE_DIR "${DEPENDENCIES}/include/tinyxml2")
@@ -171,7 +160,7 @@ message("-- GLAD_INCLUDE_DIR: ${GLAD_INCLUDE_DIR}")
 message("-- GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}")
 message("-- GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
-message("-- GLEW_INCLUDE_DIR: ~")
+message("-- GLEW_INCLUDE_DIR: ${GLEW_INCLUDE_DIR}")
 message("-- GLEW_LIBRARY: ${GLEW_LIBRARY}")
 
 message("-- TINYXML2_INCLUDE_DIR: ${TINYXML2_INCLUDE_DIR}")
@@ -221,6 +210,7 @@ set(BLITZ_INCLUDES
     ${SDL2_IMAGE_INCLUDE_DIR}
     ${GLAD_INCLUDE_DIR}
     ${GLFW_INCLUDE_DIR}
+    ${GLEW_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/
 )
