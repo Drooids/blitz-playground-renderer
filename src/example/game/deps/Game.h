@@ -75,6 +75,9 @@ public:
 
 	vector<GameObject*> m_gameObjects;
 
+	int shaderProgram;
+	unsigned int VAO;
+
 private:
 
 	// Game();

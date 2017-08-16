@@ -1,5 +1,6 @@
 #include "deps/Game.h"
 #include <iostream>
+#include "main.h"
 
 const int FPS = 60;
 const int DELAY_TIME = 1000.0f / FPS;
@@ -18,7 +19,7 @@ int main(int argc, char *argv[])
 			frameStart = SDL_GetTicks();
 
             TheGame::Instance()->handleEvents();
-            TheGame::Instance()->update();
+            // TheGame::Instance()->update();
             TheGame::Instance()->render();
 
 			frameTime = SDL_GetTicks() - frameStart;
