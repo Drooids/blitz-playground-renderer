@@ -1,0 +1,24 @@
+IMPORTANT:
+	Can't draw anything without shaders:
+	https://stackoverflow.com/questions/20376581/is-it-possible-to-draw-anything-in-opengl-3-without-writing-glsl-shaders-will
+
+Pipeline:
+	Vertices:
+		Just vertices
+
+	VOB:
+		The VBO(Vertex Buffer Object) is one of the “objects” of OpenGL. 
+		It holds all of a single vertex attributes for an object. Not all vertexes, 
+		but all vertexes of one type, like all positions or all colors. So you’ll 
+		end up with one VBO for positions, one VBO for colors, etc…
+		
+	VAO:
+		
+
+	glVertexAttribPointer:
+		After getting the attribute from the shader, tell the system what type of element it is?
+
+
+References:
+https://cognitivewaves.wordpress.com/opengl-vbo-shader-vao/
+http://headerphile.com/sdl2/opengl-part-2-vertexes-vbos-and-vaos/

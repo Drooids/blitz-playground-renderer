@@ -9,18 +9,18 @@ int main(int argc, char *argv[])
 {
 	Uint32 frameStart, frameTime;
 
-    // SDL_WINDOW_FULLSCREEN
-    // SDL_WINDOW_FULLSCREEN_DESKTOP
-    // SDL_WINDOW_BORDERLESS
-    if(TheGame::Instance()->init("Blitz Engine", 100, 100, 640, 480, SDL_WINDOW_OPENGL)) {
+	// SDL_WINDOW_FULLSCREEN
+	// SDL_WINDOW_FULLSCREEN_DESKTOP
+	// SDL_WINDOW_BORDERLESS
+	if(TheGame::Instance()->init("Blitz Engine", 100, 100, 640, 480, SDL_WINDOW_OPENGL)) {
 
-        while(TheGame::Instance()->running()) {
+		while(TheGame::Instance()->running()) {
 
 			frameStart = SDL_GetTicks();
 
-            TheGame::Instance()->handleEvents();
-            // TheGame::Instance()->update();
-            TheGame::Instance()->render();
+			TheGame::Instance()->handleEvents();
+			// TheGame::Instance()->update();
+			TheGame::Instance()->render();
 
 			frameTime = SDL_GetTicks() - frameStart;
 
@@ -35,13 +35,13 @@ int main(int argc, char *argv[])
 			if (frameTime < DELAY_TIME) {
 				SDL_Delay((int)(DELAY_TIME - frameTime));
 			}
-        }
+		}
 
-    } else {
-        std::cout << SDL_GetError() << "\n";
-    }
+	} else {
+		std::cout << SDL_GetError() << "\n";
+	}
 
-    TheGame::Instance()->clean();
+	TheGame::Instance()->clean();
 
-    return 0;
+	return 0;
 }

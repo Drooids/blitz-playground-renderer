@@ -1914,7 +1914,7 @@ typedef void (GLAPIENTRY * PFNGLVERTEXATTRIBPOINTERPROC) (GLuint index, GLint si
 #define glCreateProgram GLEW_GET_FUN(__glewCreateProgram)
 #define glCreateShader GLEW_GET_FUN(__glewCreateShader)
 #define glDeleteProgram GLEW_GET_FUN(__glewDeleteProgram)
-#define glDeleteShader GLEW_GET_FUN(__glewDeleteShader)
+#define glDeleteShaderglDeleteShader GLEW_GET_FUN(__glewDeleteShader)
 #define glDetachShader GLEW_GET_FUN(__glewDetachShader)
 #define glDisableVertexAttribArray GLEW_GET_FUN(__glewDisableVertexAttribArray)
 #define glDrawBuffers GLEW_GET_FUN(__glewDrawBuffers)
