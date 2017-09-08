@@ -52,79 +52,32 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 			if(m_mainContext != 0) {
 				std::cout << "Successful: Init (...)\n";
 
-				// Shaders
-
-				const char *vssrc =
-					"#version 330 core\n"
-					"layout (location = 0) in vec3 aPos;\n"
-					"void main()\n"
-					"{\n"
-					"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-					"}\0";
-
-				const char *fssrc =
-					"#version 330 core\n"
-					"out vec4 FragColor;\n"
-					"void main()\n"
-					"{\n"
-					"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-					"}\n\0";
-
-				// vs
-
-				int vs = glCreateShader(GL_VERTEX_SHADER);
-				glShaderSource(vs, 1, &vssrc, NULL);
-				glCompileShader(vs);
-
-				int success;
-				char infoLog[512];
-
-				glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-				if (!success) {
-					glGetShaderInfoLog(vs, 512, NULL, infoLog);
-					std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-				}
-
-				// fs
-
-				int fs = glCreateShader(GL_FRAGMENT_SHADER);
-				glShaderSource(fs, 1, &fssrc, NULL);
-				glCompileShader(fs);
-
-				glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-				if (!success) {
-					glGetShaderInfoLog(fs, 512, NULL, infoLog);
-					 std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-				}
-
-				shaderProgram = glCreateProgram();
-				glAttachShader(shaderProgram, vs);
-				glAttachShader(shaderProgram, fs);
-				glLinkProgram(shaderProgram);
-
-				glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-				if (!success) {
-					glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-					std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-				}
-
-				// glDeleteShader(vs);
-				// glDeleteShader(fs);
-
-				// User/Application data
+				m_shader = new Shader("graphics/shaders/example1.vs", "graphics/shaders/example1.fs");
 
 				float vertices[] = {
-					-0.5f, -0.5f, 0.0f, // left  
-					0.5f, -0.5f, 0.0f, // right 
-					0.0f,  0.5f, 0.0f  // top   
+					// t1
+					0.5f,  0.5f, 0.0f,  // top right
+					0.5f, -0.5f, 0.0f,  // bottom right
+					-0.5f, -0.5f, 0.0f,  // bottom left
+
+					0.75f,  0.75f, 0.0f,
+					0.75f,  -0.25f, 0.0f,
+					-0.45f,  -0.25f, 0.0f
 				};
 
-				unsigned int VBO;
+				float vertices1[] = {
+					0.75f,  0.75f, 0.0f,
+					0.75f,  -0.25f, 0.0f,
+					-0.45f,  -0.25f, 0.0f
+				};
 
-				glGenVertexArrays(1, &VAO);
+				unsigned int VBO, VBO1;
+
+				glGenVertexArrays(2, VAO);
 				glGenBuffers(1, &VBO);
+				glGenBuffers(1, &VBO1);
 
-				glBindVertexArray(VAO);
+				glBindVertexArray(VAO[0]);
 
 				glBindBuffer(GL_ARRAY_BUFFER, VBO);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -132,19 +85,8 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 				glEnableVertexAttribArray(0);
 
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-				glBindVertexArray(0);
-
-				// SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
-
-				// TheGameObjectFactory::Instance()->registerType("MenuButton", new MenuButtonCreator());
-				// TheGameObjectFactory::Instance()->registerType("Player", new PlayerCreator());
-				// TheGameObjectFactory::Instance()->registerType("Enemy", new EnemyCreator());
-				// TheGameObjectFactory::Instance()->registerType("AnimatedGraphic", new AnimatedGraphicCreator());
-
-				// m_pGameStateMachine = new GameStateMachine();
-				// m_pGameStateMachine->changeState(new MainMenuState());
+				// Unbind
+				glBindVertexArray(0); 
 
 			} else
 				return false;
@@ -177,21 +119,32 @@ bool Game::SetOpenGLAttributes()
 	return true;
 }
 
+int lastTime = 0;
+float gtime = 0.0f;
+
 void Game::render()
 {
-	glClearColor(0, 0, 0, 1);
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glUseProgram(shaderProgram);
-	glBindVertexArray(VAO);
+	// Wireframe
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	m_shader->use();
+
+	// Enable VAO to set axes data
+	glBindVertexArray(VAO[0]);
+
+	// Draw axes
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	// Draw triangles using indicies
+	// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	// Use the renderer of the state machine...
 	// m_pGameStateMachine->render();
 
 	SDL_GL_SwapWindow(m_pWindow);
-
-	// SDL_RenderPresent(m_pRenderer);
 }
 
 void Game::update()

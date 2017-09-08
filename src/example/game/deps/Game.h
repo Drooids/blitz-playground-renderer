@@ -16,7 +16,10 @@
 #include "Enemy.h"
 #include "AnimatedGraphic.h"
 
+#include "graphics/Shader.h"
+
 #include <stdio.h>
+#include <math.h>
 #include <iostream>
 #include <vector>
 
@@ -25,15 +28,13 @@
 #include <SDL_image.h>
 
 #include <glew.h>
+// #include <glfw3.h>
 
-// #include <glad.h>
-#include <glfw3.h>
+class Shader;
 
 class Game
 {
 public:
-	~Game();
-
 	static Game* Instance();
 
 	/*
@@ -55,7 +56,9 @@ public:
 	bool init(
 		const char* title, int xpos, int ypos,
 		int width, int height, int flags
-	);
+		);
+
+	Uint32 frameStart, frameTime;
 
 	bool SetOpenGLAttributes();
 
@@ -75,8 +78,7 @@ public:
 
 	vector<GameObject*> m_gameObjects;
 
-	int shaderProgram;
-	unsigned int VAO;
+	GLuint VAO[2];
 
 private:
 
@@ -94,6 +96,8 @@ private:
 
 	// OpenGL
 	int glewExperimental;
+
+	Shader* m_shader;
 
 	// Other
 

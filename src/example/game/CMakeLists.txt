@@ -39,6 +39,7 @@ SET(DEPS
 	deps/PauseState.cpp
 	deps/GameOverState.h
 	deps/GameOverState.cpp
+	deps/graphics/Shader.h
 )
 
 add_executable (main
@@ -61,6 +62,11 @@ add_custom_command(TARGET main PRE_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	  ${CMAKE_CURRENT_SOURCE_DIR}/assets
 	  $<TARGET_FILE_DIR:main>/assets)
+
+add_custom_command(TARGET main PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/graphics/shaders
+	  $<TARGET_FILE_DIR:main>/graphics/shaders)
 
 IF(WIN32)
 	# SDL

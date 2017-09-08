@@ -7,8 +7,6 @@ const int DELAY_TIME = 1000.0f / FPS;
 
 int main(int argc, char *argv[])
 {
-	Uint32 frameStart, frameTime;
-
 	// SDL_WINDOW_FULLSCREEN
 	// SDL_WINDOW_FULLSCREEN_DESKTOP
 	// SDL_WINDOW_BORDERLESS
@@ -16,13 +14,14 @@ int main(int argc, char *argv[])
 
 		while(TheGame::Instance()->running()) {
 
-			frameStart = SDL_GetTicks();
+			TheGame::Instance()->frameStart = SDL_GetTicks();
 
 			TheGame::Instance()->handleEvents();
 			// TheGame::Instance()->update();
 			TheGame::Instance()->render();
 
-			frameTime = SDL_GetTicks() - frameStart;
+			// How many ms did it take after handling, updating and rendering
+			TheGame::Instance()->frameTime = SDL_GetTicks() - TheGame::Instance()->frameStart;
 
 			/*
 				First we get the time at the start of our loop and store it in frameStart. For this we
@@ -32,8 +31,8 @@ int main(int argc, char *argv[])
 				frame to take, we call SDL_Delay and make our loop wait for the amount of time we
 				want it to, subtracting how long the loop already took to complete.
 			*/
-			if (frameTime < DELAY_TIME) {
-				SDL_Delay((int)(DELAY_TIME - frameTime));
+			if (TheGame::Instance()->frameTime < DELAY_TIME) {
+				SDL_Delay((int)(DELAY_TIME -TheGame::Instance()->frameTime));
 			}
 		}
 
