@@ -38,6 +38,10 @@ Cmake:
         1. Run the cmake gui and point it to this projects folder, configure and then generate a project using whatever toolchain you want. Tested with visual studio 2015
         2. Build the project
 
+stb:
+    stb_image:
+        That's because STB_IMAGE_IMPLEMENTATION needs to be defined within a .c or .cpp file, not within a header. When you define STB_IMAGE_IMPLEMENTATION, you are creating the bulk of the stb_image code. You only want that code to exist once, like the code in your own project, which is why it has to be defined within a .c or .cpp file.
+
 Some Useful Commands:
     # Check the arch of a static library
     objdump -f libSDL2_image.a | grep ^architecture

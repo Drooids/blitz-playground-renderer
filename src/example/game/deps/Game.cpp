@@ -1,5 +1,8 @@
 #include "Game.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 
 Game* Game::s_pInstance = 0;
@@ -52,38 +55,68 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 			if(m_mainContext != 0) {
 				std::cout << "Successful: Init (...)\n";
 
-				m_shader = new Shader("graphics/shaders/example1.vs", "graphics/shaders/example1.fs");
-
+				m_shader = new Shader("graphics/shaders/texture.vs", "graphics/shaders/texture.fs");
+				
 				float vertices[] = {
-					// t1
-					0.5f,  0.5f, 0.0f,  // top right
-					0.5f, -0.5f, 0.0f,  // bottom right
-					-0.5f, -0.5f, 0.0f,  // bottom left
-
-					0.75f,  0.75f, 0.0f,
-					0.75f,  -0.25f, 0.0f,
-					-0.45f,  -0.25f, 0.0f
+					// positions          // colors           // texture coords
+					0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+					0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+					-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+					-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+				};
+				unsigned int indices[] = {
+					0, 1, 3, // first triangle
+					1, 2, 3  // second triangle
 				};
 
-				float vertices1[] = {
-					0.75f,  0.75f, 0.0f,
-					0.75f,  -0.25f, 0.0f,
-					-0.45f,  -0.25f, 0.0f
-				};
-
-				unsigned int VBO, VBO1;
+				unsigned int VBO, EBO;
 
 				glGenVertexArrays(2, VAO);
 				glGenBuffers(1, &VBO);
-				glGenBuffers(1, &VBO1);
+				glGenBuffers(1, &EBO);
 
 				glBindVertexArray(VAO[0]);
 
 				glBindBuffer(GL_ARRAY_BUFFER, VBO);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+				// position
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 				glEnableVertexAttribArray(0);
+
+				// color attribute
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+				glEnableVertexAttribArray(1);
+
+				// texture coord attribute
+				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+				glEnableVertexAttribArray(2);
+
+				unsigned texture;
+				glGenTextures(1, &texture);
+				glBindTexture(GL_TEXTURE_2D, texture);
+
+				glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+				int w, h, nc;
+
+				unsigned char *data = stbi_load("assets/container.jpg", &w, &h, &nc, 0);
+				if (data)
+				{
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+					glGenerateMipmap(GL_TEXTURE_2D);
+				}
+				else {
+					std::cout << "Failed...";
+				}
+				stbi_image_free(data);
 
 				// Unbind
 				glBindVertexArray(0); 
@@ -130,16 +163,15 @@ void Game::render()
 	// Wireframe
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	m_shader->use();
-
 	// Enable VAO to set axes data
 	glBindVertexArray(VAO[0]);
+	m_shader->use();
 
 	// Draw axes
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	// glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	// Draw triangles using indicies
-	// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	// Use the renderer of the state machine...
 	// m_pGameStateMachine->render();

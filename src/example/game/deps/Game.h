@@ -1,6 +1,15 @@
 #ifndef GAME_H_DEFINED
 #define GAME_H_DEFINED
 
+#include <SDL.h>
+#include <SDL_main.h>
+#include <SDL_image.h>
+
+#include <stdio.h>
+#include <math.h>
+#include <iostream>
+#include <vector>
+
 #include "GameObject.h"
 #include "TextureManager.h"
 #include "InputHandler.h"
@@ -18,19 +27,8 @@
 
 #include "graphics/Shader.h"
 
-#include <stdio.h>
-#include <math.h>
-#include <iostream>
-#include <vector>
-
-#include <SDL.h>
-#include <SDL_main.h>
-#include <SDL_image.h>
-
 #include <glew.h>
 // #include <glfw3.h>
-
-class Shader;
 
 class Game
 {
