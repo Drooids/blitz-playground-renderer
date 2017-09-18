@@ -135,6 +135,9 @@ set(GLFW_INCLUDE_DIR "${DEPENDENCIES}/include/GLFW")
 # GLEW
 set(GLEW_INCLUDE_DIR "${DEPENDENCIES}/include/GL")
 
+# glm
+set(GLM_INCLUDE_DIR "${DEPENDENCIES}/include/glm")
+
 # stb
 set(STB_INCLUDE_DIR "${DEPENDENCIES}/include/stb")
 
@@ -168,6 +171,8 @@ message("-- GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
 message("-- GLEW_INCLUDE_DIR: ${GLEW_INCLUDE_DIR}")
 message("-- GLEW_LIBRARY: ${GLEW_LIBRARY}")
+
+message("-- GLM_INCLUDE_DIR: ${GLM_INCLUDE_DIR}")
 
 message("-- STB_INCLUDE_DIR: ${STB_INCLUDE_DIR}")
 
@@ -220,6 +225,7 @@ set(BLITZ_INCLUDES
     ${KHR_INCLUDE_DIR}
     ${GLFW_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
+    ${GLM_INCLUDE_DIR}
     ${STB_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/

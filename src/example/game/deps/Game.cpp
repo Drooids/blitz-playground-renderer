@@ -16,6 +16,8 @@ Game* Game::Instance() {
 	return s_pInstance;
 };
 
+unsigned texture1, texture2;
+
 bool Game::init(const char* title, int xpos, int ypos, int width,
 	int height, int flags)
 {
@@ -59,10 +61,10 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 				
 				float vertices[] = {
 					// positions          // colors           // texture coords
-					0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-					0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+					0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f, // top right
+					0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f, // bottom right
 					-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-					-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+					-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f  // top left 
 				};
 				unsigned int indices[] = {
 					0, 1, 3, // first triangle
@@ -95,19 +97,19 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 				glEnableVertexAttribArray(2);
 
-				unsigned texture;
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture);
+				glGenTextures(1, &texture1);
+				// glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture1);
 
 				glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 				int w, h, nc;
 
-				unsigned char *data = stbi_load("assets/container.jpg", &w, &h, &nc, 0);
+				unsigned char *data = stbi_load("assets/mario.jpg", &w, &h, &nc, 0);
 				if (data)
 				{
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -116,7 +118,34 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 				else {
 					std::cout << "Failed...";
 				}
-				stbi_image_free(data);
+
+				// ---
+
+				glGenTextures(1, &texture2);
+				// glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture2);
+
+				glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+				unsigned char *data1 = stbi_load("assets/moon.jpg", &w, &h, &nc, 0);
+				if (data1)
+				{
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data1);
+					glGenerateMipmap(GL_TEXTURE_2D);
+				}
+				else {
+					std::cout << "Failed...";
+				}
+
+				stbi_image_free(data1);
+
+				m_shader->use();
+				m_shader->setInt("texture1", 0);
+				m_shader->setInt("texture2", 1);
 
 				// Unbind
 				glBindVertexArray(0); 
@@ -156,16 +185,23 @@ int lastTime = 0;
 float gtime = 0.0f;
 
 void Game::render()
-{
+{	
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	// Wireframe
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	
+	m_shader->use();
+
 	// Enable VAO to set axes data
 	glBindVertexArray(VAO[0]);
-	m_shader->use();
 
 	// Draw axes
 	// glDrawArrays(GL_TRIANGLES, 0, 3);
