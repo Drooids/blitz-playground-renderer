@@ -31,6 +31,20 @@ Pipeline:
 	mipmaps:
 		~
 
+	linear algebra:
+		transformations:
+			float trans[]; // the matrix
+			// The last parameter (value_ptr) is the actual matrix data, but GLM stores their matrices
+			// not in the exact way that OpenGL likes to receive them so we first transform
+			// them with GLM's built-in function value_ptr.
+			glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+Math:
+	Camera:
+		Perspective:
+		https://stackoverflow.com/questions/21830340/understanding-glmlookat
+		https://stackoverflow.com/questions/8115352/glmperspective-explanation
+
 References:
 https://cognitivewaves.wordpress.com/opengl-vbo-shader-vao/
 http://headerphile.com/sdl2/opengl-part-2-vertexes-vbos-and-vaos/

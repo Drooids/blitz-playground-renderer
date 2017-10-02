@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	// SDL_WINDOW_FULLSCREEN
 	// SDL_WINDOW_FULLSCREEN_DESKTOP
 	// SDL_WINDOW_BORDERLESS
-	if(TheGame::Instance()->init("Blitz Engine", 100, 100, 640, 480, SDL_WINDOW_OPENGL)) {
+	if(TheGame::Instance()->init("Blitz Engine", 100, 100, 800, 600, SDL_WINDOW_OPENGL)) {
 
 		while(TheGame::Instance()->running()) {
 

@@ -18,6 +18,19 @@ Game* Game::Instance() {
 
 unsigned texture1, texture2;
 
+glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
 bool Game::init(const char* title, int xpos, int ypos, int width,
 	int height, int flags)
 {
@@ -43,10 +56,10 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 			SDL_GL_SetSwapInterval(1);
 
 			/*
-				GLEW obtains information on the supported extensions from the graphics driver. 
-				Experimental or pre-release drivers, however, might not report every available extension 
-				through the standard mechanism, in which case GLEW will report it unsupported. 
-				To circumvent this situation, the glewExperimental global switch can be turned on by 
+				GLEW obtains information on the supported extensions from the graphics driver.
+				Experimental or pre-release drivers, however, might not report every available extension
+				through the standard mechanism, in which case GLEW will report it unsupported.
+				To circumvent this situation, the glewExperimental global switch can be turned on by
 				setting it to GL_TRUE before calling glewInit(), which ensures that all extensions with valid entry points will be exposed.
 			*/
 
@@ -57,44 +70,69 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 			if(m_mainContext != 0) {
 				std::cout << "Successful: Init (...)\n";
 
+				glEnable(GL_DEPTH_TEST);
+
 				m_shader = new Shader("graphics/shaders/texture.vs", "graphics/shaders/texture.fs");
-				
+
 				float vertices[] = {
-					// positions          // colors           // texture coords
-					0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f, // top right
-					0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f, // bottom right
-					-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-					-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f  // top left 
-				};
-				unsigned int indices[] = {
-					0, 1, 3, // first triangle
-					1, 2, 3  // second triangle
-				};
+					-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+					0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+					0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+					0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+					-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+					-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-				unsigned int VBO, EBO;
+					-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+					0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+					0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+					0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+					-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+					-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-				glGenVertexArrays(2, VAO);
+					-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+					-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+					-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+					-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+					-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+					-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+					0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+					0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+					0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+					0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+					0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+					0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+					-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+					0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+					0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+					0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+					-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+					-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+					-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+					0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+					0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+					0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+					-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+					-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+				};
+		
+				unsigned int VBO;
+				glGenVertexArrays(1, VAO);
 				glGenBuffers(1, &VBO);
-				glGenBuffers(1, &EBO);
 
 				glBindVertexArray(VAO[0]);
 
 				glBindBuffer(GL_ARRAY_BUFFER, VBO);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-				// position
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+				// position attribute
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 				glEnableVertexAttribArray(0);
 
-				// color attribute
-				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-				glEnableVertexAttribArray(1);
-
 				// texture coord attribute
-				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 				glEnableVertexAttribArray(2);
 
 				glGenTextures(1, &texture1);
@@ -106,6 +144,9 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+				// Flip
+				stbi_set_flip_vertically_on_load(true);
 
 				int w, h, nc;
 
@@ -148,7 +189,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 				m_shader->setInt("texture2", 1);
 
 				// Unbind
-				glBindVertexArray(0); 
+				glBindVertexArray(0);
 
 			} else
 				return false;
@@ -181,33 +222,53 @@ bool Game::SetOpenGLAttributes()
 	return true;
 }
 
-int lastTime = 0;
-float gtime = 0.0f;
-
 void Game::render()
-{	
+{
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Wireframe
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture1);
-
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture2);
-	
+
 	m_shader->use();
+
+	// Camera
+
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 100.0f);
+	m_shader->setMat4("projection", projection);
+
+	glm::mat4 view;
+	float radius = 10.0f;
+	float camX = sin(SDL_GetTicks() / 1000.0f) * radius;
+	float camZ = cos(SDL_GetTicks() / 1000.0f) * radius;
+	view = glm::lookAt(glm::vec3(0.0, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+	m_shader->setMat4("view", view);
 
 	// Enable VAO to set axes data
 	glBindVertexArray(VAO[0]);
 
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		// calculate the model matrix for each object and pass it to shader before drawing
+		glm::mat4 model;
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		m_shader->setMat4("model", model);
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
 	// Draw axes
-	// glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	// Draw triangles using indicies
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	// Use the renderer of the state machine...
 	// m_pGameStateMachine->render();

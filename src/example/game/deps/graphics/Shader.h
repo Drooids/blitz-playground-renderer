@@ -8,6 +8,12 @@
 
 #include <glew.h>
 
+#include <glm.hpp>
+#include "ext.hpp"
+
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+
 class Shader
 {
 public:
@@ -101,6 +107,13 @@ public:
 	{
 		int vl = glGetUniformLocation(ID, name.c_str());
 		glUniform4f(vl, 0.0f, value, 0.0f, 1.0f);
+	}
+
+	void setMat4(const std::string &name, glm::mat4 mat)
+	{
+		glUniformMatrix4fv(
+			glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat)
+		);
 	}
 
 private:

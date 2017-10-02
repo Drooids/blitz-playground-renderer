@@ -1,7 +1,6 @@
 #include "Texture.h"
 
 #include <glew.h>
-
 #include <stb_image.h>
 
 Texture::Texture(const char* filePath)
