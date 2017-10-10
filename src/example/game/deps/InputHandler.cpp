@@ -217,9 +217,9 @@ void InputHandler::onMouseButtonUp(SDL_Event &event)
 
 void InputHandler::reset()
 {
-    m_mouseButtonStates[LEFT] = false;
-    m_mouseButtonStates[RIGHT] = false;
-    m_mouseButtonStates[MIDDLE] = false;
+	m_mouseButtonStates[LEFT] = false;
+	m_mouseButtonStates[RIGHT] = false;
+	m_mouseButtonStates[MIDDLE] = false;
 }
 
 void InputHandler::onJoystickAxisMove(SDL_Event &event)

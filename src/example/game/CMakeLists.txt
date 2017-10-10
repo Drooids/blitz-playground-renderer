@@ -40,6 +40,7 @@ SET(DEPS
 	deps/GameOverState.h
 	deps/GameOverState.cpp
 	deps/graphics/Shader.h
+	deps/Camera.h
 )
 
 add_executable (main

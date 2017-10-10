@@ -26,6 +26,7 @@
 #include "AnimatedGraphic.h"
 
 #include "graphics/Shader.h"
+#include "Camera.h"
 
 #include <glew.h>
 // #include <glfw3.h>
@@ -62,7 +63,11 @@ public:
 		int width, int height, int flags
 		);
 
-	Uint32 frameStart, frameTime;
+	uint32_t frameStart, frameTime;
+
+	float currentFrame = 0.0f;
+	float lastFrame = 0.0f;
+	float dt = 0.0f; // delta time
 
 	bool SetOpenGLAttributes();
 

@@ -31,6 +31,9 @@ glm::vec3 cubePositions[] = {
 	glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
 bool Game::init(const char* title, int xpos, int ypos, int width,
 	int height, int flags)
 {
@@ -242,12 +245,19 @@ void Game::render()
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 640.0f/480.0f, 0.1f, 100.0f);
 	m_shader->setMat4("projection", projection);
 
+	camera.onInput(true, false, true); // drag, scroll, keypress
+
 	glm::mat4 view;
 	float radius = 10.0f;
+
 	float camX = sin(SDL_GetTicks() / 1000.0f) * radius;
 	float camZ = cos(SDL_GetTicks() / 1000.0f) * radius;
-	view = glm::lookAt(glm::vec3(0.0, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+	// view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+	
+	view = camera.GetViewMatrix();
 	m_shader->setMat4("view", view);
+
+	// std::cout << "camX: " << camX << "camZ:" << camZ << endl;
 
 	// Enable VAO to set axes data
 	glBindVertexArray(VAO[0]);
@@ -281,12 +291,12 @@ void Game::update()
 	// m_pGameStateMachine->update();
 }
 
-void Game::handleEvents()
-{
+void Game::handleEvents() {
+
 	TheInputHandler::Instance()->update();
 
 	if (TheInputHandler::Instance()->onKeyDown(SDL_SCANCODE_RETURN)) {
-		m_pGameStateMachine->changeState(new PlayState());
+		// m_pGameStateMachine->changeState(new PlayState());
 	}
 }
 

@@ -7,21 +7,28 @@ const int DELAY_TIME = 1000.0f / FPS;
 
 int main(int argc, char *argv[])
 {
+	Game* game = TheGame::Instance();
+
 	// SDL_WINDOW_FULLSCREEN
 	// SDL_WINDOW_FULLSCREEN_DESKTOP
 	// SDL_WINDOW_BORDERLESS
-	if(TheGame::Instance()->init("Blitz Engine", 100, 100, 800, 600, SDL_WINDOW_OPENGL)) {
+	if(game->init("Blitz Engine", 100, 100, 800, 600, SDL_WINDOW_OPENGL)) {
 
-		while(TheGame::Instance()->running()) {
+		while(game->running()) {
 
-			TheGame::Instance()->frameStart = SDL_GetTicks();
+			// Not to get confused on the first look later on, I'll explain it to myself:
+			// currentFrame takes the current time, dt is the difference between the current and last times
+			// and finally we reset the time...
+			game->currentFrame = SDL_GetTicks();
+			game->dt = game->currentFrame - game->lastFrame;
+			game->lastFrame = game->currentFrame;
 
-			TheGame::Instance()->handleEvents();
-			// TheGame::Instance()->update();
-			TheGame::Instance()->render();
+			game->handleEvents();
+			// game->update();
+			game->render();
 
 			// How many ms did it take after handling, updating and rendering
-			TheGame::Instance()->frameTime = SDL_GetTicks() - TheGame::Instance()->frameStart;
+			game->frameTime = SDL_GetTicks() - game->frameStart;
 
 			/*
 				First we get the time at the start of our loop and store it in frameStart. For this we
@@ -31,8 +38,8 @@ int main(int argc, char *argv[])
 				frame to take, we call SDL_Delay and make our loop wait for the amount of time we
 				want it to, subtracting how long the loop already took to complete.
 			*/
-			if (TheGame::Instance()->frameTime < DELAY_TIME) {
-				SDL_Delay((int)(DELAY_TIME -TheGame::Instance()->frameTime));
+			if (game->frameTime < DELAY_TIME) {
+				SDL_Delay((int)(DELAY_TIME -game->frameTime));
 			}
 		}
 
@@ -40,7 +47,7 @@ int main(int argc, char *argv[])
 		std::cout << SDL_GetError() << "\n";
 	}
 
-	TheGame::Instance()->clean();
+	game->clean();
 
 	return 0;
 }
