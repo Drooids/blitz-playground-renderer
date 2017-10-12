@@ -32,7 +32,7 @@ glm::vec3 cubePositions[] = {
 };
 
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(3.0f, 3.0f, 3.0f));
 
 bool Game::init(const char* title, int xpos, int ypos, int width,
 	int height, int flags)
@@ -75,7 +75,11 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 
 				glEnable(GL_DEPTH_TEST);
 
+				_sleep(1000);
+
 				m_shader = new Shader("graphics/shaders/texture.vs", "graphics/shaders/texture.fs");
+
+				_sleep(1000);
 
 				float vertices[] = {
 					-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -252,9 +256,10 @@ void Game::render()
 
 	float camX = sin(SDL_GetTicks() / 1000.0f) * radius;
 	float camZ = cos(SDL_GetTicks() / 1000.0f) * radius;
+
 	// view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 	
-	view = camera.GetViewMatrix();
+	view = camera.GetTPSViewMatrix();
 	m_shader->setMat4("view", view);
 
 	// std::cout << "camX: " << camX << "camZ:" << camZ << endl;

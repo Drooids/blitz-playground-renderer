@@ -49,10 +49,11 @@ public:
 
 	void onKeyDown();
 	void onKeyUp();
-
 	bool onKeyDown(SDL_Scancode key);
 
 	void onMouseMove(SDL_Event & event);
+	bool isMouseMovig();
+
 	void onMouseButtonDown(SDL_Event & event);
 	void onMouseButtonUp(SDL_Event & event);
 	void reset();
@@ -87,6 +88,10 @@ public:
 	bool getMouseButtonState(int buttonNumber);
 
 	Vector2D* getMousePosition();
+	Vector2D* getMousePrevPosition();
+	Vector2D* getMouseClickPosition();
+	Vector2D* getMouseUnClickPosition();
+	Vector2D* getMouseMoveDiff();
 
 private:
 	InputHandler();
@@ -134,10 +139,19 @@ private:
 	// Mouse
 
 	// Buttons
+	bool m_isMouseDown;
 	std::vector<bool> m_mouseButtonStates;
 
+	// Original Position
+	// Used to detect the position of the mouse after mouse button click
+	Vector2D* m_mouseClickPosition;
+	Vector2D* m_mouseUnClickPosition;
+
 	// Motion
+	Vector2D* m_mousePrevPosition;
 	Vector2D* m_mousePosition;
+	Vector2D* m_mouseDiff;
+	bool m_mouseInMotion;
 
 	// Keyboard
 

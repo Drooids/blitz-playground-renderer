@@ -55,12 +55,6 @@ public:
 		updateCameraVectors();
 	}
 
-	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-	glm::mat4 GetViewMatrix()
-	{
-		return glm::lookAt(m_position, m_position + m_front, m_up);
-	}
-
 	void lookAt()
 	{
 	}
@@ -110,7 +104,7 @@ public:
 		}
 	}
 
-	void dragInput(Vector2D* mousePos, bool constrainPitch = true)
+	void dragFPSInput(Vector2D* mousePos, bool constrainPitch = true)
 	{
 
 		if (m_mouseFirstMove)
@@ -123,13 +117,14 @@ public:
 		float xoffset = mousePos->getX() - m_mouseLastX;
 		float yoffset = m_mouseLastY - mousePos->getY(); // reversed since y-coordinates go from bottom to top
 
-		xoffset *= m_moveSpeed / 100;
-		yoffset *= m_moveSpeed / 100;
+		xoffset *= m_moveSpeed / 50;
+		yoffset *= m_moveSpeed / 50;
 
-		std::cout << "xoffset: " << xoffset << endl;
+		m_position = glm::rotateY(m_position, glm::radians(-xoffset));
+		m_position = glm::rotateX(m_position, glm::radians(yoffset));
 
-		m_yaw += xoffset;
-		m_pitch += yoffset;
+		// m_yaw += xoffset;
+		// m_pitch += yoffset;
 
 		// Make sure that when pitch is out of bounds, screen doesn't get flipped
 		if (constrainPitch)
@@ -144,14 +139,28 @@ public:
 		updateCameraVectors();
 	}
 
+	void dragTPSInput(Vector2D* mouseMoveDiff)
+	{
+		float angleX = 0;
+		float angleY = 0;
+
+		float sensitivity = 0.5f;
+
+		m_position = glm::rotateY(m_position, glm::radians(-mouseMoveDiff->getX() * sensitivity));
+		m_position = glm::rotateX(m_position, glm::radians(-mouseMoveDiff->getY() * sensitivity));
+
+		// updateCameraVectors();
+	}
+
 	void onInput(bool drag = true, bool scroll = true, bool keyboard = false)
 	{
 		if (drag) {
 			if (_inHandler->getMouseButtonState(_inHandler->mouse_buttons::LEFT)) {
-				std::cout << "mousepos: " << _inHandler->getMousePosition()->getX()
-					<< " " << _inHandler->getMousePosition()->getY() << endl;
 
-				dragInput(_inHandler->getMousePosition());
+				std::cout << _inHandler->getMouseMoveDiff() << endl;
+
+				if(_inHandler->isMouseMovig())
+					dragTPSInput(_inHandler->getMouseMoveDiff());
 			}
 		}
 
@@ -160,6 +169,17 @@ public:
 
 		if (keyboard)
 			keyboardInput();
+	}
+
+	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
+	glm::mat4 GetFPSVewMatrix()
+	{
+		return glm::lookAt(m_position, m_position + m_front, m_up);
+	}
+
+	glm::mat4 GetTPSViewMatrix()
+	{
+		return glm::lookAt(m_position, m_front, m_up);
 	}
 
 private:

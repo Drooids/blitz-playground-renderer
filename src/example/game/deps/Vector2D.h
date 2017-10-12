@@ -64,6 +64,12 @@ public:
 		return *this;
 	}
 
+	friend std::ostream &operator<<(std::ostream &os, Vector2D* const &v) {
+		return os << "vector: \n" 
+			<< "\tx: " << v->getX() << "\n"
+			<< "\ty: " << v->getY();
+	}
+
 private:
 	virtual void normalize();
 

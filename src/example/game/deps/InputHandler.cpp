@@ -6,7 +6,13 @@ InputHandler* InputHandler::s_pInstance = 0;
 InputHandler::InputHandler() :
 	m_keystates(NULL),
 	m_bJoysticksInitialised(false),
-	m_mousePosition(new Vector2D(0, 0))
+	m_mouseClickPosition(new Vector2D()),
+	m_mouseUnClickPosition(new Vector2D()),
+	m_mousePrevPosition(new Vector2D()),
+	m_mousePosition(new Vector2D()),
+	m_mouseDiff(new Vector2D()),
+	m_isMouseDown(false),
+	m_mouseInMotion(false)
 {
 	for (int i = 0; i < 3; i++) {
 		m_mouseButtonStates.push_back(false);
@@ -16,7 +22,10 @@ InputHandler::InputHandler() :
 InputHandler::~InputHandler()
 {
 	// delete anything we created dynamically
+	delete m_mousePrevPosition;
 	delete m_mousePosition;
+	delete m_mouseClickPosition;
+	delete m_mouseUnClickPosition;
 
 	// clear our arrays
 	/*
@@ -79,26 +88,57 @@ void InputHandler::initializeJoysticks()
 	}
 }
 
-bool InputHandler::joysticksInitialised() {
+bool InputHandler::joysticksInitialised() 
+{
 	return m_bJoysticksInitialised;
 }
 
-bool InputHandler::getButtonState(int joy, int buttonNumber) {
+bool InputHandler::getButtonState(int joy, int buttonNumber) 
+{
 	return m_buttonStates[joy][buttonNumber];
 }
 
-
-bool InputHandler::getMouseButtonState(int buttonNumber) {
+bool InputHandler::getMouseButtonState(int buttonNumber) 
+{
 	return m_mouseButtonStates[buttonNumber];
 }
 
-Vector2D* InputHandler::getMousePosition() {
+Vector2D* InputHandler::getMousePosition() 
+{
 	return m_mousePosition;
+}
+
+Vector2D* InputHandler::getMousePrevPosition() 
+{
+	return m_mousePrevPosition;
+}
+
+Vector2D* InputHandler::getMouseClickPosition() 
+{
+	return m_mouseClickPosition;
+}
+
+Vector2D* InputHandler::getMouseUnClickPosition() 
+{
+	return m_mouseUnClickPosition;
+}
+
+Vector2D* InputHandler::getMouseMoveDiff()
+{	
+	float diffX = getMousePosition()->getX() - getMousePrevPosition()->getX();
+	float diffY = getMousePosition()->getY() - getMousePrevPosition()->getY();
+
+	m_mouseDiff->setX(diffX);
+	m_mouseDiff->setY(diffY);
+
+	return m_mouseDiff;
 }
 
 void InputHandler::update()
 {
 	SDL_Event event;
+
+	m_mouseInMotion = false;
 
 	if(SDL_PollEvent(&event)) {
 		switch(event.type) {
@@ -175,8 +215,18 @@ bool InputHandler::onKeyDown(SDL_Scancode key)
 
 void InputHandler::onMouseMove(SDL_Event &event)
 {
+	m_mouseInMotion = true;
+
+	m_mousePrevPosition->setX(m_mousePosition->getX());
+	m_mousePrevPosition->setY(m_mousePosition->getY());
+
 	m_mousePosition->setX(event.motion.x);
 	m_mousePosition->setY(event.motion.y);
+}
+
+bool InputHandler::isMouseMovig()
+{
+	return m_mouseInMotion;
 }
 
 void InputHandler::onMouseButtonDown(SDL_Event &event)
@@ -195,6 +245,13 @@ void InputHandler::onMouseButtonDown(SDL_Event &event)
 	{
 		m_mouseButtonStates[RIGHT] = true;
 	}
+
+	if (!m_isMouseDown) {
+		m_mouseClickPosition->setX(event.motion.x);
+		m_mouseClickPosition->setY(event.motion.y);
+	}
+
+	m_isMouseDown = true;
 }
 
 void InputHandler::onMouseButtonUp(SDL_Event &event)
@@ -213,6 +270,13 @@ void InputHandler::onMouseButtonUp(SDL_Event &event)
 	{
 		m_mouseButtonStates[RIGHT] = false;
 	}
+
+	if (!m_isMouseDown) {
+		m_mouseUnClickPosition->setX(event.motion.x);
+		m_mouseUnClickPosition->setY(event.motion.y);
+	}
+
+	m_isMouseDown = false;
 }
 
 void InputHandler::reset()
