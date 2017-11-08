@@ -27,14 +27,16 @@ public:
 	bool m_enableInput;
 
 	// Mouse
-	float m_mouseSensitivity;
+	float m_mouseMoveSensitivity;
+	float m_mouseZoomSensitivity;
 
 	enum class direction { in, out, right, left };
 
 	Camera(glm::vec3 eye = glm::vec3(0.0f, 0.0f, 5.0f),
 		glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
-		float mouseSensitivity = 0.05f) :
+		float mouseMoveSensitivity = 0.05f,
+		float mouseZoomSensitivity = 0.05f) :
 
 		m_forward(glm::vec3(0.0f, 0.0f, -0.1f)),
 		m_enableInput(false)
@@ -45,32 +47,21 @@ public:
 
 		m_target = target;
 
-		m_mouseSensitivity = mouseSensitivity;
+		m_mouseMoveSensitivity = mouseMoveSensitivity;
+		m_mouseZoomSensitivity = mouseZoomSensitivity;
 
 		resetViewMatrix(eye, target);
-	}
-
-	void resetViewMatrix(glm::vec3& eye, glm::vec3& target)
-	{
-		m_forward = eye - target;
-		m_forward = glm::normalize(m_forward);
-
-		m_left = glm::cross(m_up, m_forward);
-		m_left = glm::normalize(m_left);
-
-		m_up = glm::cross(m_forward, m_left);
-		m_up = glm::normalize(m_up);
 	}
 
 	void lookAt()
 	{
 	}
 
-	void move(direction d)
+	void move(direction dir)
 	{
 	}
 
-	glm::mat3 rotate(const float degrees, const glm::vec3& axis)
+	glm::mat3 rotationMatrix(const float degrees, const glm::vec3& axis)
 	{
 		float cos = glm::cos(glm::radians(degrees));
 		float sin = glm::sin(glm::radians(degrees));
@@ -112,14 +103,16 @@ public:
 	}
 
 	// Transforms the camera left around the "crystal ball" interface
-	void left(float degrees, glm::vec3& eye, glm::vec3& up) {
-		eye = rotate(degrees, up) * eye;
+	void rotateLeft(float degrees, glm::vec3& eye, glm::vec3& up) 
+	{
+		eye = rotationMatrix(degrees, up) * eye;
 
 		resetViewMatrix(eye, m_target);
 	}
 
-	void up(float degrees, glm::vec3& eye, glm::vec3& up) {
-		eye = rotate(degrees, m_left) * eye;
+	void rotateUp(float degrees, glm::vec3& eye, glm::vec3& up) 
+	{
+		eye = rotationMatrix(degrees, m_left) * eye;
 
 		m_left = glm::normalize(glm::cross(m_forward, up));
 		m_up = glm::normalize(glm::cross(m_left, m_forward));
@@ -127,8 +120,16 @@ public:
 		resetViewMatrix(eye, m_target);
 	}
 
-	void zoom()
+	void zoom(direction dir)
 	{
+		// TODO: set the camera zoom limit
+
+		if (dir == direction::in) {
+			m_eye += m_eye * m_mouseZoomSensitivity;
+		}
+		if (dir == direction::out) {
+			m_eye -= m_eye * m_mouseZoomSensitivity;
+		}
 	}
 
 	void scrollInput()
@@ -138,11 +139,12 @@ public:
 	void keyboardInput()
 	{
 		if (_inHandler->onKeyDown(SDL_SCANCODE_W)) {
-			move(direction::in);
+			zoom(direction::in);
 		}
 		if (_inHandler->onKeyDown(SDL_SCANCODE_S)) {
-			move(direction::out);
+			zoom(direction::out);
 		}
+
 		if (_inHandler->onKeyDown(SDL_SCANCODE_D)) {
 			move(direction::right);
 		}
@@ -171,11 +173,11 @@ public:
 
 	void dragTPSInput(Vector2D* mouseMoveDiff)
 	{
-		up(mouseMoveDiff->getY(), m_eye, m_up);
-		left(mouseMoveDiff->getX(), m_eye, m_up);
+		rotateUp(mouseMoveDiff->getY(), m_eye, m_up);
+		rotateLeft(mouseMoveDiff->getX(), m_eye, m_up);
 	}
 
-	void onInput(bool drag = true, bool scroll = true, bool keyboard = false)
+	void onInput(bool drag = false, bool scroll = false, bool keyboard = false)
 	{
 		if (drag)
 			if (_inHandler->getMouseButtonState(_inHandler->mouse_buttons::LEFT))
@@ -196,6 +198,19 @@ public:
 	}
 
 private:
+
+	void resetViewMatrix(glm::vec3& eye, glm::vec3& target)
+	{
+		m_forward = eye - target;
+		m_forward = glm::normalize(m_forward);
+
+		m_left = glm::cross(m_up, m_forward);
+		m_left = glm::normalize(m_left);
+
+		m_up = glm::cross(m_forward, m_left);
+		m_up = glm::normalize(m_up);
+	}
+
 	void updateCameraVectors()
 	{
 		// Calculate the new Front vector
