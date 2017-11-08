@@ -31,7 +31,7 @@ public:
 		vShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
 		fShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
 
-		std::cout << vertexPath << " " << fragmentPath << endl;
+		std::cout << vertexPath << " " << fragmentPath << std::endl;
 
 		try
 		{
@@ -127,7 +127,7 @@ private:
 			if (!success)
 			{
 				glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-				std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" 
+				std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
 					<< infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
 			}
 		}
@@ -137,7 +137,7 @@ private:
 			if (!success)
 			{
 				glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-				std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" 
+				std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
 					<< infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
 			}
 		}

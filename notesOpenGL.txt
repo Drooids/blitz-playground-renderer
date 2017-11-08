@@ -44,6 +44,8 @@ Math:
 		Perspective:
 		https://stackoverflow.com/questions/21830340/understanding-glmlookat
 		https://stackoverflow.com/questions/8115352/glmperspective-explanation
+	Rotation:
+		Rotation around arbitrary axies: https://youtu.be/LazSPnaoJ_Q?t=537
 
 References:
 https://cognitivewaves.wordpress.com/opengl-vbo-shader-vao/

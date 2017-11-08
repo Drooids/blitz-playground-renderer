@@ -19,8 +19,8 @@ Game* Game::Instance() {
 unsigned texture1, texture2;
 
 glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(0.0f,  0.0f,  -1.0f),
+	glm::vec3(1.0f,  4.0f, -5.0f),
 	glm::vec3(-1.5f, -2.2f, -2.5f),
 	glm::vec3(-3.8f, -2.0f, -12.3f),
 	glm::vec3(2.4f, -0.4f, -3.5f),
@@ -32,7 +32,7 @@ glm::vec3 cubePositions[] = {
 };
 
 
-Camera camera(glm::vec3(3.0f, 3.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
 bool Game::init(const char* title, int xpos, int ypos, int width,
 	int height, int flags)
@@ -124,7 +124,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width,
 					-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 					-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 				};
-		
+
 				unsigned int VBO;
 				glGenVertexArrays(1, VAO);
 				glGenBuffers(1, &VBO);
@@ -252,28 +252,22 @@ void Game::render()
 	camera.onInput(true, false, true); // drag, scroll, keypress
 
 	glm::mat4 view;
-	float radius = 10.0f;
 
-	float camX = sin(SDL_GetTicks() / 1000.0f) * radius;
-	float camZ = cos(SDL_GetTicks() / 1000.0f) * radius;
-
-	// view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-	
-	view = camera.GetTPSViewMatrix();
+	view = camera.getViewMatrix();
 	m_shader->setMat4("view", view);
-
-	// std::cout << "camX: " << camX << "camZ:" << camZ << endl;
 
 	// Enable VAO to set axes data
 	glBindVertexArray(VAO[0]);
 
-	for (unsigned int i = 0; i < 10; i++)
+	for (unsigned int i = 0; i < 2; i++)
 	{
 		// calculate the model matrix for each object and pass it to shader before drawing
 		glm::mat4 model;
 		model = glm::translate(model, cubePositions[i]);
+
 		float angle = 20.0f * i;
-		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.0f, 0.0f));
 		m_shader->setMat4("model", model);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);

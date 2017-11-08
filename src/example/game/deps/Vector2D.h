@@ -4,7 +4,7 @@
 #include <iostream>
 #include <math.h>
 
-class Vector2D 
+class Vector2D
 {
 public:
 	Vector2D();
@@ -18,7 +18,9 @@ public:
 	virtual void setX(float x);
 	virtual void setY(float y);
 
-	virtual int length();
+	virtual float length();
+	virtual void normalize();
+
 
 	Vector2D operator+(const Vector2D& v2) const {
 		return Vector2D(m_x + v2.m_x, m_y + v2.m_y);
@@ -65,13 +67,12 @@ public:
 	}
 
 	friend std::ostream &operator<<(std::ostream &os, Vector2D* const &v) {
-		return os << "vector: \n" 
+		return os << "vector: \n"
 			<< "\tx: " << v->getX() << "\n"
 			<< "\ty: " << v->getY();
 	}
 
 private:
-	virtual void normalize();
 
 	float m_x;
 	float m_y;

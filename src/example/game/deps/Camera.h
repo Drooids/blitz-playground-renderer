@@ -7,52 +7,59 @@
 #include "InputHandler.h"
 #include "Vector2D.h"
 
-class Camera 
+#include "Matrices.h"
+
+class Camera
 {
 public:
 
-	glm::vec3 m_position;
-	
-	glm::vec3 m_front;
-	glm::vec3 m_up;
-	glm::vec3 m_right;
+	glm::vec3 m_eye;
 
-	glm::vec3 m_worldup;
+	glm::vec3 m_forward;
+	glm::vec3 m_up;
+	glm::vec3 m_left;
+
+	glm::vec3 m_target;
 
 	float m_yaw;
 	float m_pitch;
 
-	float m_zoom;
-	float m_moveSpeed;
-
 	bool m_enableInput;
 
-	bool m_mouseFirstMove = true;
-	float m_mouseLastX;
-	float m_mouseLastY;
+	// Mouse
+	float m_mouseSensitivity;
 
 	enum class direction { in, out, right, left };
 
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), 
-		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), 
-		float yaw = -90.0f,
-		float pitch = 0.0,
-		float zoom = 1.0f,
-		float moveSpeed = 0.25f) : 
-		m_front(glm::vec3(0.0f, 0.0f, -1.0f)), 
+	Camera(glm::vec3 eye = glm::vec3(0.0f, 0.0f, 5.0f),
+		glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+		float mouseSensitivity = 0.05f) :
+
+		m_forward(glm::vec3(0.0f, 0.0f, -0.1f)),
 		m_enableInput(false)
+
 	{
-		m_position = position;
+		m_eye = eye;
+		m_up = up;
 
-		m_yaw = yaw;
-		m_pitch = pitch;
+		m_target = target;
 
-		m_worldup = up;
+		m_mouseSensitivity = mouseSensitivity;
 
-		m_zoom = zoom;
-		m_moveSpeed = moveSpeed;
+		resetViewMatrix(eye, target);
+	}
 
-		updateCameraVectors();
+	void resetViewMatrix(glm::vec3& eye, glm::vec3& target)
+	{
+		m_forward = eye - target;
+		m_forward = glm::normalize(m_forward);
+
+		m_left = glm::cross(m_up, m_forward);
+		m_left = glm::normalize(m_left);
+
+		m_up = glm::cross(m_forward, m_left);
+		m_up = glm::normalize(m_up);
 	}
 
 	void lookAt()
@@ -61,21 +68,63 @@ public:
 
 	void move(direction d)
 	{
-		if (d == direction::in)
-			m_position += m_moveSpeed * m_front;
-		
-		if(d == direction::out)
-			m_position -= m_moveSpeed * m_front;
-
-		if(d == direction::right)
-			m_position += glm::normalize(glm::cross(m_front, m_up)) * m_moveSpeed;
-
-		if(d == direction::left)
-			m_position -= glm::normalize(glm::cross(m_front, m_up)) * m_moveSpeed;
 	}
-	
-	void rotate()
+
+	glm::mat3 rotate(const float degrees, const glm::vec3& axis)
 	{
+		float cos = glm::cos(glm::radians(degrees));
+		float sin = glm::sin(glm::radians(degrees));
+
+		float c = 1.0f - cos;
+
+		glm::mat3 I(1.0f);
+
+		float x = axis.x;
+		float y = axis.y;
+		float z = axis.z;
+
+		float xx = x * x;
+		float yy = y * y;
+		float zz = z * z;
+
+		float xy = x * y;
+		float xz = x * z;
+
+		float yz = y * z;
+
+		glm::mat3 AM(
+			xx, xy, xz,
+			xy, yy, yz,
+			xz, yz, zz
+		);
+
+		glm::mat3 RM(
+			0, -z, y,
+			z, 0, -x,
+			-y, x, 0
+		);
+
+		I = cos * I;
+		AM = c * AM;
+		RM = sin * RM;
+
+		return glm::mat3(I + AM + RM);
+	}
+
+	// Transforms the camera left around the "crystal ball" interface
+	void left(float degrees, glm::vec3& eye, glm::vec3& up) {
+		eye = rotate(degrees, up) * eye;
+
+		resetViewMatrix(eye, m_target);
+	}
+
+	void up(float degrees, glm::vec3& eye, glm::vec3& up) {
+		eye = rotate(degrees, m_left) * eye;
+
+		m_left = glm::normalize(glm::cross(m_forward, up));
+		m_up = glm::normalize(glm::cross(m_left, m_forward));
+
+		resetViewMatrix(eye, m_target);
 	}
 
 	void zoom()
@@ -88,8 +137,6 @@ public:
 
 	void keyboardInput()
 	{
-		// todo: give the user ability to adjust input keys
-
 		if (_inHandler->onKeyDown(SDL_SCANCODE_W)) {
 			move(direction::in);
 		}
@@ -104,27 +151,10 @@ public:
 		}
 	}
 
-	void dragFPSInput(Vector2D* mousePos, bool constrainPitch = true)
+	void dragFPSInput(Vector2D* mouseMoveDiff, bool constrainPitch = true)
 	{
-
-		if (m_mouseFirstMove)
-		{
-			m_mouseLastX = mousePos->getX();
-			m_mouseLastY = mousePos->getY();
-			m_mouseFirstMove = false;
-		}
-
-		float xoffset = mousePos->getX() - m_mouseLastX;
-		float yoffset = m_mouseLastY - mousePos->getY(); // reversed since y-coordinates go from bottom to top
-
-		xoffset *= m_moveSpeed / 50;
-		yoffset *= m_moveSpeed / 50;
-
-		m_position = glm::rotateY(m_position, glm::radians(-xoffset));
-		m_position = glm::rotateX(m_position, glm::radians(yoffset));
-
-		// m_yaw += xoffset;
-		// m_pitch += yoffset;
+		// m_yaw += mouseMoveDiff->getX() * 0.5; // offsetx
+		m_pitch += -(mouseMoveDiff->getY() * 0.5); // offsety
 
 		// Make sure that when pitch is out of bounds, screen doesn't get flipped
 		if (constrainPitch)
@@ -141,28 +171,16 @@ public:
 
 	void dragTPSInput(Vector2D* mouseMoveDiff)
 	{
-		float angleX = 0;
-		float angleY = 0;
-
-		float sensitivity = 0.5f;
-
-		m_position = glm::rotateY(m_position, glm::radians(-mouseMoveDiff->getX() * sensitivity));
-		m_position = glm::rotateX(m_position, glm::radians(-mouseMoveDiff->getY() * sensitivity));
-
-		// updateCameraVectors();
+		up(mouseMoveDiff->getY(), m_eye, m_up);
+		left(mouseMoveDiff->getX(), m_eye, m_up);
 	}
 
 	void onInput(bool drag = true, bool scroll = true, bool keyboard = false)
 	{
-		if (drag) {
-			if (_inHandler->getMouseButtonState(_inHandler->mouse_buttons::LEFT)) {
-
-				std::cout << _inHandler->getMouseMoveDiff() << endl;
-
+		if (drag)
+			if (_inHandler->getMouseButtonState(_inHandler->mouse_buttons::LEFT))
 				if(_inHandler->isMouseMovig())
 					dragTPSInput(_inHandler->getMouseMoveDiff());
-			}
-		}
 
 		if (scroll)
 			scrollInput();
@@ -172,32 +190,27 @@ public:
 	}
 
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-	glm::mat4 GetFPSVewMatrix()
+	glm::mat4 getViewMatrix()
 	{
-		return glm::lookAt(m_position, m_position + m_front, m_up);
-	}
-
-	glm::mat4 GetTPSViewMatrix()
-	{
-		return glm::lookAt(m_position, m_front, m_up);
+		return glm::lookAt(m_eye, m_forward, m_up);
 	}
 
 private:
 	void updateCameraVectors()
 	{
 		// Calculate the new Front vector
-		glm::vec3 front;
-		front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
-		front.y = sin(glm::radians(m_pitch));
-		front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+		glm::vec3 forward;
+		forward.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+		forward.y = sin(glm::radians(m_pitch));
+		forward.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
 
-		m_front = glm::normalize(front);
+		m_forward = glm::normalize(forward);
 
 		// Also re-calculate the Right and Up vector
-		// Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-		m_right = glm::normalize(glm::cross(m_front, m_worldup)); 
-		
-		m_up = glm::normalize(glm::cross(m_right, m_front));
+		// Normalize the vectors, because their length gets closer to 0 the more you 
+		// look up or down which results in slower movement.
+		m_left = glm::normalize(glm::cross(m_forward, m_up));
+		m_up = glm::normalize(glm::cross(m_left, m_forward));
 	}
 
 	InputHandler* _inHandler = TheInputHandler::Instance();
