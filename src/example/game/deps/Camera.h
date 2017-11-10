@@ -5,14 +5,12 @@
 #include <gtc/type_ptr.hpp>
 
 #include "InputHandler.h"
+#include "math/Matrix.h"
 #include "Vector2D.h"
-
-#include "Matrices.h"
 
 class Camera
 {
 public:
-
 	glm::vec3 m_eye;
 
 	glm::vec3 m_forward;
@@ -61,58 +59,17 @@ public:
 	{
 	}
 
-	glm::mat3 rotationMatrix(const float degrees, const glm::vec3& axis)
-	{
-		float cos = glm::cos(glm::radians(degrees));
-		float sin = glm::sin(glm::radians(degrees));
-
-		float c = 1.0f - cos;
-
-		glm::mat3 I(1.0f);
-
-		float x = axis.x;
-		float y = axis.y;
-		float z = axis.z;
-
-		float xx = x * x;
-		float yy = y * y;
-		float zz = z * z;
-
-		float xy = x * y;
-		float xz = x * z;
-
-		float yz = y * z;
-
-		glm::mat3 AM(
-			xx, xy, xz,
-			xy, yy, yz,
-			xz, yz, zz
-		);
-
-		glm::mat3 RM(
-			0, -z, y,
-			z, 0, -x,
-			-y, x, 0
-		);
-
-		I = cos * I;
-		AM = c * AM;
-		RM = sin * RM;
-
-		return glm::mat3(I + AM + RM);
-	}
-
 	void rotate(direction dir, float degrees, glm::vec3& eye, glm::vec3& up)
 	{
 		if (dir == direction::vertical) {
-			eye = rotationMatrix(degrees, m_left) * eye;
+			eye = Math::Matrix::rotation(degrees, m_left) * eye;
 
 			m_left = glm::normalize(glm::cross(m_forward, up));
 			m_up = glm::normalize(glm::cross(m_left, m_forward));
 		}
 
 		if (dir == direction::horizontal) {
-			eye = rotationMatrix(degrees, up) * eye;
+			eye = Math::Matrix::rotation(degrees, up) * eye;
 		}
 
 		resetViewMatrix(eye, m_target);
@@ -220,7 +177,7 @@ private:
 		m_forward = glm::normalize(forward);
 
 		// Also re-calculate the Right and Up vector
-		// Normalize the vectors, because their length gets closer to 0 the more you 
+		// Normalize the vectors, because their length gets closer to 0 the more you
 		// look up or down which results in slower movement.
 		m_left = glm::normalize(glm::cross(m_forward, m_up));
 		m_up = glm::normalize(glm::cross(m_left, m_forward));

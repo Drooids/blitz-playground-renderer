@@ -3,6 +3,8 @@ include_directories(deps)
 SET(DEPS
 	deps/Game.cpp
 	deps/Game.h
+	deps/math/Math.h
+	deps/math/Matrix.h
 	deps/LoaderParams.h
 	deps/TextureManager.cpp
 	deps/TextureManager.h
