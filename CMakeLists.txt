@@ -144,6 +144,9 @@ set(STB_INCLUDE_DIR "${DEPENDENCIES}/include/stb")
 # tinyxml2
 set(TINYXML2_INCLUDE_DIR "${DEPENDENCIES}/include/tinyxml2")
 
+# imgui
+set(IMGUI_INCLUDE_DIR "${DEPENDENCIES}/include/imgui")
+
 # Library paths info
 
 message("--")
@@ -178,6 +181,9 @@ message("-- STB_INCLUDE_DIR: ${STB_INCLUDE_DIR}")
 
 message("-- TINYXML2_INCLUDE_DIR: ${TINYXML2_INCLUDE_DIR}")
 message("-- TINYXML2_LIBRARY: ${TINYXML2_LIBRARY}")
+
+message("-- IMGUI_INCLUDE_DIR: ${IMGUI_INCLUDE_DIR}")
+
 message("--")
 
 IF(NOT WIN32)
@@ -228,6 +234,7 @@ set(BLITZ_INCLUDES
     ${GLM_INCLUDE_DIR}
     ${STB_INCLUDE_DIR}
     ${TINYXML2_INCLUDE_DIR}
+    ${IMGUI_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/
 )
 

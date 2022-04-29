@@ -110,20 +110,15 @@ public:
 
 	void dragFPSInput(Vector2D* mouseMoveDiff, bool constrainPitch = true)
 	{
-		// m_yaw += mouseMoveDiff->getX() * 0.5; // offsetx
+		m_yaw += mouseMoveDiff->getX() * 0.5; // offsetx
 		m_pitch += -(mouseMoveDiff->getY() * 0.5); // offsety
 
 		// Make sure that when pitch is out of bounds, screen doesn't get flipped
 		if (constrainPitch)
 		{
-			if (m_pitch > 89.0f)
-				m_pitch = 89.0f;
-			if (m_pitch < -89.0f)
-				m_pitch = -89.0f;
 		}
-
-		// Update Front, Right and Up Vectors using the updated Eular angles
-		updateCameraVectors();
+	
+		// reset axis
 	}
 
 	void dragTPSInput(Vector2D* mouseMoveDiff)
