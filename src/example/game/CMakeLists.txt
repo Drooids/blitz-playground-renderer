@@ -10,7 +10,7 @@ SET(DEPS
 	deps/TextureManager.h
 	deps/Vector2D.cpp
 	deps/Vector2D.h
-	dets/Vectors.h
+	deps/Vectors.h
 	deps/Matrices.h
 	deps/Matrices.cpp
 	deps/InputHandler.cpp

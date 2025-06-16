@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
@@ -57,7 +57,7 @@ set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Root dir")#
 
 set(CP_CMAKE_DIR ${PROJECT_SOURCE_DIR}/cmake)
 
-include(cotire)
+# include(cotire)
 include(${CP_CMAKE_DIR}/macros.cmake)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
